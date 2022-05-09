@@ -5,7 +5,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  EMBER_PARTITION_TOTAL: 4  # Has to be changed in tandem with the matrix.partion
+  EMBER_PARTITION_TOTAL: 4  # Has to be changed in tandem with the matrix.partition
 
 jobs:
   frontend-cache:
@@ -101,7 +101,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: frontend-oss-${{ matrix.branch }}
-          path: .ui/packages/consul-ui/dist
+          path: ./ui/packages/consul-ui/dist
+          if-no-files-found: error
 
   frontend-test-oss:
     runs-on: ubuntu-latest
@@ -109,7 +110,7 @@ jobs:
     strategy:
       matrix:
         branch: [ release/1.11.x, release/1.12.x ]
-        partion: [ 1, 2, 3, 4 ]
+        partition: [ 1, 2, 3, 4 ]
     env:
       CONSUL_NSPACES_ENABLED: 0
       EMBER_TEST_REPORT: test-results/report-oss.xml #outputs test report for CircleCI test summary
@@ -136,7 +137,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: frontend-oss-${{ matrix.branch }}
-          path: .ui/packages/consul-ui/dist
+          path: ./ui/packages/consul-ui/dist
 
       - name: Ember Test OSS
         id: cache
@@ -181,7 +182,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: frontend-ent-${{ matrix.branch }}
-          path: .ui/packages/consul-ui/dist
+          path: ./ui/packages/consul-ui/dist
+          if-no-files-found: error
 
   frontend-test-ent:
     runs-on: ubuntu-latest
@@ -189,7 +191,7 @@ jobs:
     strategy:
       matrix:
         branch: [ release/1.11.x, release/1.12.x ]
-        partion: [ 1, 2, 3, 4 ]
+        partition: [ 1, 2, 3, 4 ]
     env:
       CONSUL_NSPACES_ENABLED: 1
       EMBER_TEST_REPORT: test-results/report-oss.xml #outputs test report for CircleCI test summary
@@ -216,7 +218,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: frontend-ent-${{ matrix.branch }}
-          path: .ui/packages/consul-ui/dist
+          path: ./ui/packages/consul-ui/dist
 
       - name: Ember Test ENT
         id: cache
