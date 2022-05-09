@@ -111,14 +111,6 @@ jobs:
         working-directory: ./ui/packages/consul-ui
         run: node_modules/.bin/ember exam --split=$EMBER_PARTITION_TOTAL --partition=${{ matrix.partition }} --path dist --silent -r xunit
 
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: Ember Test Results - Partition ${{ matrix.partition }}
-          path: ./ui/packages/consul-ui/test-results/*.xml
-          reporter: dotnet-trx
-
   frontend-build-ent:
     runs-on: ubuntu-latest
     env:
@@ -191,14 +183,6 @@ jobs:
         working-directory: ./ui/packages/consul-ui
         run: node_modules/.bin/ember exam --split=$EMBER_PARTITION_TOTAL --partition=${{ matrix.partition }} --path dist --silent -r xunit
 
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: Ember Test Results - Partition ${{ matrix.partition }}
-          path: ./ui/packages/consul-ui/test-results/*.xml
-          reporter: dotnet-trx
-
   frontend-test-coverage-ent:
     runs-on: ubuntu-latest
     needs: [frontend-build-ent]
@@ -240,7 +224,7 @@ jobs:
         with:
           payload: |
             {
-              "message": "One or more nightly UI test have failed on a branch ${{ env.BRANCH }} for Consul. [Link to Failed Action](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+              "message": "One or more nightly UI tests have failed on branch ${{ env.BRANCH }} for Consul. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.CONSUL_CORE_SLACK_WEBHOOK }}
