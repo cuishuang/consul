@@ -10,33 +10,11 @@ env:
   BRANCH_NAME: "release-1.12.x" # Used for naming artifacts
 
 jobs:
-  frontend-cache:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          ref: ${{ env.BRANCH }}
-
-      # Not necessary to use yarn, but enables caching
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14
-          cache: 'yarn'
-          cache-dependency-path: ./ui/yarn.lock
-
-      - name: Install
-        id: install
-        working-directory: ./ui
-        run: make deps
-
   frontend-test-workspace-node:
     runs-on: ubuntu-latest
-    needs: [frontend-cache]
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
           ref: ${{ env.BRANCH }}
 
       # Not necessary to use yarn, but enables caching
@@ -63,14 +41,12 @@ jobs:
 
   frontend-build-oss:
     runs-on: ubuntu-latest
-    needs: [frontend-cache]
     env:
       JOBS: 2
       CONSUL_NSPACES_ENABLED: 0
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
           ref: ${{ env.BRANCH }}
 
       # Not necessary to use yarn, but enables caching
@@ -110,7 +86,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
           ref: ${{ env.BRANCH }}
 
       # Not necessary to use yarn, but enables caching
@@ -126,7 +101,7 @@ jobs:
         run: make deps
 
       - name: Download OSS Frontend
-        uses: actions/upload-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: frontend-oss-${{ env.BRANCH_NAME }}
           path: ./ui/packages/consul-ui/dist
@@ -140,14 +115,12 @@ jobs:
 
   frontend-build-ent:
     runs-on: ubuntu-latest
-    needs: [frontend-cache]
     env:
       JOBS: 2
       CONSUL_NSPACES_ENABLED: 1
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
           ref: ${{ env.BRANCH }}
 
       # Not necessary to use yarn, but enables caching
@@ -187,7 +160,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
           ref: ${{ env.BRANCH }}
 
       # Not necessary to use yarn, but enables caching
@@ -203,7 +175,7 @@ jobs:
         run: make deps
 
       - name: Download ENT Frontend
-        uses: actions/upload-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: frontend-ent-${{ env.BRANCH_NAME }}
           path: ./ui/packages/consul-ui/dist
@@ -221,7 +193,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
           ref: ${{ env.BRANCH }}
 
       # Not necessary to use yarn, but enables caching
@@ -235,6 +206,12 @@ jobs:
         id: install
         working-directory: ./ui
         run: make deps
+
+      - name: Download ENT Frontend
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-ent-${{ env.BRANCH_NAME }}
+          path: ./ui/packages/consul-ui/dist
 
       - name: Run ENT Code Coverage
         working-directory: ./ui/packages/consul-ui
